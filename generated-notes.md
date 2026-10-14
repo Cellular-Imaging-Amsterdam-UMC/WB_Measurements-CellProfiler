@@ -20,11 +20,29 @@ for BIOMERO, following the `create-biomero-container` procedure of
 | `.github/workflows` | New `ci.yml` (validate + tests). `docker-image.yml` replaced by the template's version, which takes the image tag from `config.yaml` instead of the old semver tags. |
 | `README.md`, `.gitignore`, `.dockerignore` | README covers bilayers/BIOMERO use, the RO-Crate output, registration, local Docker runs and development. |
 
-### Still to verify
+### Follow-up fixes found by running the container
 
-The image build and a run of the container test (`pytest`, needs Docker running), covering:
+| Where | Fix |
+|---|---|
+| `Dockerfile` | The base image is Ubuntu 18.04 (glibc 2.27, gcc 7): the BIOMERO layer installs wheels only (uv picks versions with wheels for this glibc), except the pure-Python source-only packages, and leaves out `openslide-bin` (only needed for MIRAX slides). |
+| `.github/workflows/ci.yml` | pip cache keyed on `requirements-dev.txt`. |
+| `tests/test_workflow.py` | Container test builds with the repository root as context. |
+| biomero-converter 0.2.1 | 3/4-channel OME-Zarr to OME-TIFF, RGB only for 8-bit, small multi-channel images, names ending in e/m/o, OME-Zarr without omero metadata. |
+| fair-metadata-integration 0.2.1, 0.2.2 | File outputs (the CSV tables) were added to the RO-Crate as empty folders; CSV (and other common formats) now get an EDAM format. |
+| biomero-template-container | Non-hidden staging folder (CellProfiler skips hidden folders); `container-test` for workflow repositories; requires the two releases above. |
+
+### Verified
+
+CI (`pytest`, including the container test) builds the image and runs it like BIOMERO on a synthetic
+OME-Zarr job (an RGB image with nuclei, cell and aggregate label masks), covering:
 
 - the Python 3.12 environment inside the CellProfiler image;
-- CellProfiler reading the OME-TIFF converted from RGB OME-Zarr as a color image;
-- the masks pairing correctly with their images after conversion;
-- the expected CSVs (with type-hint rows) and `ro-crate-metadata.json` in the output.
+- the OME-Zarr input converted to OME-TIFF and read by CellProfiler (RGB image as color image);
+- the masks paired with their image;
+- the CSV tables (Nuclei with one row per nucleus, after the type-hint row and header) and
+  `ro-crate-metadata.json` + `config.yaml` in the output.
+
+### Still to verify
+
+- A run on real images and masks (only synthetic data so far).
+- A run through BIOMERO on Slurm (Singularity) after release `v1.0.0` and registration.
