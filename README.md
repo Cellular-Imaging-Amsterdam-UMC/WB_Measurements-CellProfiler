@@ -13,7 +13,9 @@ Before running this workflow you must have:
 - **A Cell mask per image** — same convention, ending with the configured cells suffix (default: `_Cells_Mask`).
 - **An Aggregates/Foci mask per image** — same convention, ending with the configured aggregates suffix (default: `_Aggregates_Mask`).
 
-All four files (original image + three masks) must live in the same input folder.
+All four files (original image + three masks) must live in the same input folder. Images may be
+TIFF or OME-Zarr (as BIOMERO exports them); OME-Zarr is converted to OME-TIFF for CellProfiler, keeping
+the file names, so the suffixes still match.
 
 ## Outputs
 
@@ -27,6 +29,7 @@ Per-object CSV files are written to the output folder:
 | `Image.csv` | Per-image aggregate statistics |
 | `Experiment.csv` | Run-level metadata |
 | `*.cppipe` | Copy of the modified pipeline used (for reproducibility) |
+| `ro-crate-metadata.json`, `config.yaml` | [Workflow RO-Crate](https://w3id.org/workflowhub/workflow-ro-crate/1.1) describing the run: the workflow spec, the input and every output |
 
 ## Parameters
 
@@ -41,14 +44,47 @@ Per-object CSV files are written to the output folder:
 
 ## BIOMERO compatibility
 
-This workflow is [BIOMERO](https://github.com/NL-BioImaging/biomero)-compatible and can be launched from the OMERO web interface on a SLURM cluster. BIOMERO handles fetching input images and masks from OMERO, dispatching the job, and uploading the output CSVs back. To register it, follow the standard BIOMERO software-registration steps using the `descriptor.json` from this repository.
+This workflow is a [bilayers](https://github.com/bilayer-containers/bilayers) container for
+[BIOMERO](https://github.com/NL-BioImaging/biomero): BIOMERO reads `config.yaml` from this repository
+(at a release tag), shows the parameters in OMERO, runs the image on a Slurm cluster and imports the
+CSV tables back. Register it in BIOMERO's `slurm-config.ini`:
+
+```ini
+[WORKFLOWS]
+measurements=measurements
+measurements_repo=https://github.com/Cellular-Imaging-Amsterdam-UMC/WB_Measurements-CellProfiler/tree/vX.Y.Z
+measurements_image=cellularimagingcf/w_measurements-cellprofiler
+```
+
+The release tag must equal `docker_image.tag` in `config.yaml`; publishing the release builds and pushes
+the image (`.github/workflows/docker-image.yml`).
+
+Run it locally with Docker, laid out like a BIOMERO job:
+
+```
+docker build -t cellularimagingcf/w_measurements-cellprofiler .
+docker run --rm -v ./job/data:/data cellularimagingcf/w_measurements-cellprofiler     --infolder=/data/in --outfolder=/data/out --metric_channels=1,2,3
+```
 
 ## Technical notes (for developers)
 
-This workflow uses the [BIAFLOWS](https://biaflows.neubias.org/) framework:
+Built with [biomero-template-container](https://github.com/NL-BioImaging/biomero-template-container):
 
-- **Entry point:** `wrapper.py` — initialises a `BiaflowsJob`, modifies the `.cppipe` file at runtime to inject the configured suffixes and channel list, then runs CellProfiler headless.
-- **Pipeline patching:** The `.cppipe` is loaded via `cellprofiler_core`; the `NamesAndTypes` module settings are updated in-memory with user-configured suffixes, and channel modules are added or removed to match `metric_channels`.
-- **CSV post-processing:** A type-hint row is prepended to each output CSV so OMERO tables can infer column types on import.
+- **`config.yaml`** — the bilayers spec: input folder, output folder, parameters, citations, image.
+- **`wrapper.py`** — image entrypoint (Python 3.12 environment `/opt/biomero`): resolves the values
+  BIOMERO passes, converts OME-Zarr input to OME-TIFF, runs `exec_function.cli_command` and makes the
+  output folder a Workflow RO-Crate (fair-metadata-integration).
+- **`cellprofiler_run.py`** — the tool, run with CellProfiler's own Python: loads the `.cppipe` via
+  `cellprofiler_core`, updates the `NamesAndTypes` mask suffixes and the channel modules to match
+  `metric_channels`, runs CellProfiler headless, and prepends a type-hint row to each CSV so OMERO
+  tables can infer column types.
 - **Container base:** `cellprofiler/cellprofiler:4.2.6`
-- **BIAFLOWS utilities:** [`biaflows-utilities@v0.10.0`](https://github.com/TorecLuik/biaflows-utilities)
+
+Development:
+
+```
+pip install -r requirements-dev.txt
+biomero-template validate config.yaml --biomero
+pytest                                   # the container test needs Docker running
+python tests/sample_data.py <folder>     # synthetic image + masks (OME-Zarr; --tiff for TIFF)
+```
