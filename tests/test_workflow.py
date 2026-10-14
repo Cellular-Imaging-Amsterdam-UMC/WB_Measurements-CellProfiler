@@ -64,7 +64,7 @@ def test_container_on_sample_job(tmp_path):
     """Build the image and run it like BIOMERO on synthetic OME-Zarr images and masks."""
     sample = tmp_path / "sample"
     write_sample(sample)
-    outputs = container_test(CONFIG, sample=sample, keep=tmp_path / "job")
+    outputs = container_test(CONFIG, context=ROOT, sample=sample, keep=tmp_path / "job")
     names = {path.name for path in outputs}
     assert set(CSV_TABLES) <= names
     assert "ro-crate-metadata.json" in names and "config.yaml" in names
