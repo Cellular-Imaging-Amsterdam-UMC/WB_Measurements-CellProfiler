@@ -42,7 +42,9 @@ def write_sample(folder: Path, as_zarr: bool = True) -> list:
     written = []
     for stem, data in make_images().items():
         tiff = folder / f"{stem}.ome.tif"
-        tifffile.imwrite(tiff, data, photometric="rgb" if data.ndim == 3 else "minisblack", ome=True)
+        # the OME name names the converted OME-Zarr (tifffile's default is Image0)
+        tifffile.imwrite(tiff, data, photometric="rgb" if data.ndim == 3 else "minisblack", ome=True,
+                         metadata={"Name": stem})
         if as_zarr:
             stores = convert(tiff, folder, ZARR)
             tiff.unlink()
