@@ -1,4 +1,4 @@
-# W_Measurements-CellProfiler
+# WB_Measurements-CellProfiler
 
 Batch feature extraction for 2D fluorescence images using **CellProfiler 4.2.6**, designed for datasets that already have three pre-segmented object masks — nuclei, cells, and sub-cellular aggregates or foci.
 
@@ -53,7 +53,7 @@ CSV tables back. Register it in BIOMERO's `slurm-config.ini`:
 [WORKFLOWS]
 measurements=measurements
 measurements_repo=https://github.com/Cellular-Imaging-Amsterdam-UMC/WB_Measurements-CellProfiler/tree/vX.Y.Z
-measurements_image=cellularimagingcf/w_measurements-cellprofiler
+measurements_image=cellularimagingcf/wb_measurements-cellprofiler
 ```
 
 The release tag must equal `docker_image.tag` in `config.yaml`; publishing the release builds and pushes
@@ -62,8 +62,8 @@ the image (`.github/workflows/docker-image.yml`).
 Run it locally with Docker, laid out like a BIOMERO job:
 
 ```
-docker build -t cellularimagingcf/w_measurements-cellprofiler .
-docker run --rm -v ./job/data:/data cellularimagingcf/w_measurements-cellprofiler     --infolder=/data/in --outfolder=/data/out --metric_channels=1,2,3
+docker build -t cellularimagingcf/wb_measurements-cellprofiler .
+docker run --rm -v ./job/data:/data cellularimagingcf/wb_measurements-cellprofiler     --infolder=/data/in --outfolder=/data/out --metric_channels=1,2,3
 ```
 
 ## Technical notes (for developers)

@@ -13,7 +13,7 @@ for BIOMERO, following the `create-biomero-container` procedure of
 |---|---|
 | `wrapper.py` → `cellprofiler_run.py` (`git mv`) | Ported off BIAFLOWS: plain arguments instead of `BiaflowsJob`/`prepare_data`. The pipeline editing, CellProfiler run and CSV type-hint step are unchanged. Still runs with CellProfiler's own Python. |
 | `descriptor.json` (`git rm`) | Removed: BIOMERO looks for `descriptor.json` before `config.yaml`, so it would keep the old BIAFLOWS mode. Regenerate with `biomero-template to-biaflows config.yaml` if a BIAFLOWS-only deployment needs one. |
-| `config.yaml` (new) | The bilayers spec, drafted from the old descriptor (`biomero-template from-biaflows`) and completed: image+masks input as TIFF (OME-Zarr gets converted to OME-TIFF), CSV measurement output, the 4 parameters, citations for this workflow and CellProfiler 4, image tag `v1.0.0`. Valid for both the bilayers schema and BIOMERO's parser. |
+| `config.yaml` (new) | The bilayers spec, drafted from the old descriptor (`biomero-template from-biaflows`) and completed: image+masks input as TIFF (OME-Zarr gets converted to OME-TIFF), CSV measurement output, the 4 parameters, citations for this workflow and CellProfiler 4, image `cellularimagingcf/wb_measurements-cellprofiler:v2.0.0` (renamed from the base repository's `w_measurements-cellprofiler` so its images are not overwritten). Valid for both the bilayers schema and BIOMERO's parser. |
 | `wrapper.py` (new) | The image entrypoint: `run(spec=CONFIG)` from `biomero_template`, which calls `cellprofiler_run.py` through `config.yaml`'s `cli_command`, converts input formats and writes the Workflow RO-Crate into the output folder. |
 | `Dockerfile` | Still `FROM cellprofiler/cellprofiler:4.2.6` (now fully qualified); Cytomine client and biaflows-utilities removed. `biomero_template` is installed from GitHub into a separate Python 3.12 environment (`/opt/biomero`), which is the new entrypoint. |
 | `tests/`, `pytest.ini`, `requirements-dev.txt` | Config and BIOMERO checks, Dockerfile checks, a check that no descriptor shadows `config.yaml`, synthetic sample data (an RGB image plus three label masks, as OME-Zarr), and a Docker test running the image like BIOMERO on that sample. |
@@ -45,4 +45,4 @@ OME-Zarr job (an RGB image with nuclei, cell and aggregate label masks), coverin
 ### Still to verify
 
 - A run on real images and masks (only synthetic data so far).
-- A run through BIOMERO on Slurm (Singularity) after release `v1.0.0` and registration.
+- A run through BIOMERO on Slurm (Singularity) after release `v2.0.0` and registration.
