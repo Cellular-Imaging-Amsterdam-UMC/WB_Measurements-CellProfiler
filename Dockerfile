@@ -30,3 +30,9 @@ COPY config.yaml wrapper.py /app/
 RUN mkdir -p /data/in /data/out
 WORKDIR /app
 ENTRYPOINT ["/opt/biomero/bin/python", "/app/wrapper.py"]
+
+# Example build:
+# docker build -t measurements-cellprofiler .
+
+# Example run:
+# docker run -v C:/Project/slides:/data -t measurements-cellprofiler --infolder=/data/cells
