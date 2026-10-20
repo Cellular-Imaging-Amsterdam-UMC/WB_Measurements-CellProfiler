@@ -172,6 +172,29 @@ def parse_arguments(argv):
     return parser.parse_args(argv)
 
 
+def check_input(parameters):
+    """Fail early with a clear message when CellProfiler would find no image sets.
+
+    Raises:
+        ValueError: If the input folder has no files, or no files for one of the mask suffixes
+
+    """
+    in_path = parameters.infolder
+    files = [name for _, _, names in os.walk(in_path) for name in names]
+    if not files:
+        raise ValueError(
+            f"No input files in {in_path}: mount a folder with the images and their masks, "
+            f"e.g. docker run -v ./job/data:/data <image> --infolder=/data/in --outfolder=/data/out")
+    for mask_key, param_name in PARAMETER_SUFFIXES.items():
+        suffix = getattr(parameters, param_name)
+        if not any(suffix in name for name in files):
+            raise ValueError(
+                f"No files in {in_path} contain the {param_name} '{suffix}': this workflow needs, "
+                f"next to each image, its nuclei, cells and aggregates label masks (e.g. "
+                f"image.tif, image{parameters.nuclei_mask_suffix}.tif, ...); "
+                f"found: {', '.join(sorted(files)[:10])}")
+
+
 def main(argv):
     """Starting point for this CellProfiler workflow.
 
@@ -179,10 +202,11 @@ def main(argv):
         argv: all the given command line arguments
 
     Raises:
-        ValueError: If CellProfiler pipeline failed
+        ValueError: If the input has no image sets or the CellProfiler pipeline failed
 
     """
     parameters = parse_arguments(argv)
+    check_input(parameters)
     in_path, out_path = parameters.infolder, parameters.outfolder
     os.makedirs(out_path, exist_ok=True)
     timestamp = int(time.time() * 1000)
