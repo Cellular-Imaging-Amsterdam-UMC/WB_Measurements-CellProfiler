@@ -1,6 +1,6 @@
 """Synthetic sample job: an RGB image with its nuclei, cells and aggregates label masks.
 
-Written as OME-Zarr (as BIOMERO provides images) or TIFF. Usage:
+Written as OME-Zarr or OME-TIFF, the two input formats. Usage:
     python tests/sample_data.py <folder> [--tiff]
 """
 import argparse
@@ -41,8 +41,8 @@ def write_sample(folder: Path, as_zarr: bool = True) -> list:
     folder.mkdir(parents=True, exist_ok=True)
     written = []
     for stem, data in make_images().items():
-        tiff = folder / f"{stem}.tif"
-        tifffile.imwrite(tiff, data, photometric="rgb" if data.ndim == 3 else "minisblack")
+        tiff = folder / f"{stem}.ome.tif"
+        tifffile.imwrite(tiff, data, photometric="rgb" if data.ndim == 3 else "minisblack", ome=True)
         if as_zarr:
             stores = convert(tiff, folder, ZARR)
             tiff.unlink()
@@ -57,7 +57,7 @@ def write_sample(folder: Path, as_zarr: bool = True) -> list:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("folder", type=Path)
-    parser.add_argument("--tiff", action="store_true", help="write TIFF instead of OME-Zarr")
+    parser.add_argument("--tiff", action="store_true", help="write OME-TIFF instead of OME-Zarr")
     args = parser.parse_args()
     for path in write_sample(args.folder, as_zarr=not args.tiff):
         print(path)

@@ -8,6 +8,7 @@ from biomero_template import BilayersSpec
 from biomero_template.cli import main as biomero_template_cli
 from biomero_template.container_test import container_test, detect_runtime
 from biomero_template.contract import biomero_argv
+from biomero_template.conversion import TIFF, ZARR, normalize_formats
 
 from sample_data import NAME, SUFFIXES, write_sample
 
@@ -33,7 +34,11 @@ def test_biomero_arguments_build_the_cellprofiler_command():
 
 def test_sample_data_names_match_the_mask_suffixes(tmp_path):
     names = sorted(path.name for path in write_sample(tmp_path, as_zarr=False))
-    assert names == sorted(f"{NAME}{suffix}.tif" for suffix in ("", *SUFFIXES))
+    assert names == sorted(f"{NAME}{suffix}.ome.tif" for suffix in ("", *SUFFIXES))
+
+
+def test_config_accepts_ome_tiff_and_ome_zarr():
+    assert normalize_formats(BilayersSpec(CONFIG).inputs["infolder"]["format"]) == {TIFF, ZARR}
 
 
 def _instructions(keyword):
@@ -60,11 +65,13 @@ def _docker_running():
 
 @pytest.mark.container
 @pytest.mark.skipif(not _docker_running(), reason="Docker is not running")
-def test_container_on_sample_job(tmp_path):
-    """Build the image and run it like BIOMERO on synthetic OME-Zarr images and masks."""
+@pytest.mark.parametrize("as_zarr", [True, False], ids=["ome-zarr", "ome-tiff"])
+def test_container_on_sample_job(tmp_path, as_zarr):
+    """Build the image and run it like BIOMERO on synthetic images and masks, in each input format."""
     sample = tmp_path / "sample"
-    write_sample(sample)
-    outputs = container_test(CONFIG, context=ROOT, sample=sample, keep=tmp_path / "job")
+    write_sample(sample, as_zarr=as_zarr)
+    # the first run builds the image
+    outputs = container_test(CONFIG, context=ROOT, sample=sample, keep=tmp_path / "job", build=as_zarr)
     names = {path.name for path in outputs}
     assert set(CSV_TABLES) <= names
     assert "ro-crate-metadata.json" in names and "config.yaml" in names

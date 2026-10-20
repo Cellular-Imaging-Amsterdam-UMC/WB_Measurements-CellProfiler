@@ -33,7 +33,8 @@ inputs:
     default: "directory"
     optional: False
     format:
-      - tiff
+      - ometiff
+      - omezarr
     unique_string:
       - "*"
     folder_name: "/data/in"
