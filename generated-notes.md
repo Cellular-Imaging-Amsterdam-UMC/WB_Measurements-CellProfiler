@@ -44,6 +44,9 @@ OME-Zarr job (an RGB image with nuclei, cell and aggregate label masks), coverin
 - the CSV tables (Nuclei with one row per nucleus, after the type-hint row and header) and
   `ro-crate-metadata.json` + `config.yaml` in the output.
 
+The same tests, including the container test, also pass locally on Windows (Docker 29.9.2,
+Linux containers) at `v2.0.1`, with fair-metadata-integration 0.6.0.
+
 ### Still to verify
 
 - A run on real images and masks (only synthetic data so far).
