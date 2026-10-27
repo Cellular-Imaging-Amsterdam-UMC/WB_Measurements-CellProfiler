@@ -50,4 +50,4 @@ Linux containers) at `v2.0.1`, with fair-metadata-integration 0.6.0.
 ### Still to verify
 
 - A run on real images and masks (only synthetic data so far).
-- A run through BIOMERO on Slurm (Singularity) after release `v2.0.0` and registration.
+- A run through BIOMERO on Slurm (Singularity) after release `v2.0.1` and registration.
