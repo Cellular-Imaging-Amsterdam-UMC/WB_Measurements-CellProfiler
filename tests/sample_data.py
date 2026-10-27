@@ -9,8 +9,8 @@ from pathlib import Path
 import numpy as np
 import tifffile
 
-from biomero_template.contract import add_omero_metadata
-from biomero_template.conversion import ZARR, convert
+from biomero_auto.contract import add_omero_metadata
+from biomero_auto.conversion import ZARR, convert
 
 NAME = "sample"
 SUFFIXES = ("_Nuclei_Mask", "_Cells_Mask", "_Aggregates_Mask")

@@ -2,11 +2,11 @@
 
 Resolves the values BIOMERO passes (see config.yaml), converts OME-Zarr input to OME-TIFF for
 CellProfiler, runs ``exec_function.cli_command`` (cellprofiler_run.py, with CellProfiler's own
-Python) and makes the output folder a Workflow RO-Crate; see biomero_template.
+Python) and makes the output folder a Workflow RO-Crate; see biomero_auto.
 """
 from pathlib import Path
 
-from biomero_template import run
+from biomero_auto import run
 
 CONFIG = Path(__file__).with_name("config.yaml")
 

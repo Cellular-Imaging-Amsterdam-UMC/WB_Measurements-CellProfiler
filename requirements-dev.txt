@@ -1,2 +1,2 @@
-# biomero_template (with BIOMERO, LinkML and pytest) to validate and test this workflow
-biomero-template-container[test] @ git+https://github.com/NL-BioImaging/biomero-template-container.git
+# biomero_auto (with BIOMERO, LinkML and pytest) to validate and test this workflow
+biomero-auto-container[test] @ git+https://github.com/NL-BioImaging/biomero-auto-container.git

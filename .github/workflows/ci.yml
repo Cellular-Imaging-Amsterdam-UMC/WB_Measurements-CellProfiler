@@ -15,5 +15,5 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-dev.txt
       - run: pip install -r requirements-dev.txt
-      - run: biomero-template validate config.yaml --biomero
+      - run: biomero-auto validate config.yaml --biomero
       - run: pytest

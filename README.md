@@ -1,5 +1,13 @@
 # WB_Measurements-CellProfiler
 
+> This BIOMERO workflow container was generated using
+> [biomero-auto-container](https://github.com/NL-BioImaging/biomero-auto-container) from
+> [W_Measurements-CellProfiler](https://github.com/Cellular-Imaging-Amsterdam-UMC/W_Measurements-CellProfiler)
+> (a BIAFLOWS workflow). It runs in [BIOMERO](https://github.com/NL-BioImaging/biomero), is described
+> by a [bilayers](https://github.com/bilayer-containers/bilayers) spec (`config.yaml`), and adds
+> OME-Zarr conversion and RO-Crate metadata. See [generated-notes.md](generated-notes.md) for how it
+> was made.
+
 Batch feature extraction for 2D fluorescence images using **CellProfiler 4.2.6**, designed for datasets that already have three pre-segmented object masks — nuclei, cells, and sub-cellular aggregates or foci.
 
 The workflow runs a headless CellProfiler pipeline (`FullMeasurementsNucleiCellAggregates.cppipe`) and writes per-object CSV tables containing morphology features (area, perimeter, shape descriptors, texture) and per-channel intensity statistics for every detected nucleus, cell, and aggregate. This makes it suitable for studies where you need to relate aggregate or foci counts and intensities back to their parent cells and nuclei.
@@ -68,7 +76,7 @@ docker run --rm -v ./job/data:/data cellularimagingcf/wb_measurements-cellprofil
 
 ## Technical notes (for developers)
 
-Built with [biomero-template-container](https://github.com/NL-BioImaging/biomero-template-container):
+Built with [biomero-auto-container](https://github.com/NL-BioImaging/biomero-auto-container):
 
 - **`config.yaml`** — the bilayers spec: input folder, output folder, parameters, citations, image.
 - **`wrapper.py`** — image entrypoint (Python 3.12 environment `/opt/biomero`): resolves the values
@@ -84,7 +92,7 @@ Development:
 
 ```
 pip install -r requirements-dev.txt
-biomero-template validate config.yaml --biomero
+biomero-auto validate config.yaml --biomero
 pytest                                   # the container test needs Docker running
 python tests/sample_data.py <folder>     # synthetic image + masks (OME-Zarr; --tiff for OME-TIFF)
 ```

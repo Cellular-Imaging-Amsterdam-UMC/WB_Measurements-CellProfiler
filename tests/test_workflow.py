@@ -1,14 +1,14 @@
-"""Checks for this workflow, using biomero_template (pip install -r requirements-dev.txt)."""
+"""Checks for this workflow, using biomero_auto (pip install -r requirements-dev.txt)."""
 import shlex
 from pathlib import Path, PurePosixPath
 
 import pytest
 
-from biomero_template import BilayersSpec
-from biomero_template.cli import main as biomero_template_cli
-from biomero_template.container_test import container_test, detect_runtime
-from biomero_template.contract import biomero_argv
-from biomero_template.conversion import TIFF, ZARR, normalize_formats
+from biomero_auto import BilayersSpec
+from biomero_auto.cli import main as biomero_auto_cli
+from biomero_auto.container_test import container_test, detect_runtime
+from biomero_auto.contract import biomero_argv
+from biomero_auto.conversion import TIFF, ZARR, normalize_formats
 
 from sample_data import NAME, SUFFIXES, write_sample
 
@@ -18,7 +18,7 @@ CSV_TABLES = ("Nuclei.csv", "Cells.csv", "Aggregates.csv", "Image.csv", "Experim
 
 
 def test_config_is_valid_for_bilayers_and_biomero():
-    assert biomero_template_cli(["validate", str(CONFIG), "--biomero"]) == 0
+    assert biomero_auto_cli(["validate", str(CONFIG), "--biomero"]) == 0
 
 
 def test_biomero_arguments_build_the_cellprofiler_command():
