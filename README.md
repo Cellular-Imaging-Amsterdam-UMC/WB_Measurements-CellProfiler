@@ -1,6 +1,7 @@
 # WB_Measurements-CellProfiler
 
-> This BIOMERO workflow container was generated using
+> This BIOMERO workflow container was generated with AI assistance (Claude Code, using the
+> `create-biomero-container` skill) using
 > [biomero-auto-container](https://github.com/NL-BioImaging/biomero-auto-container) from
 > [W_Measurements-CellProfiler](https://github.com/Cellular-Imaging-Amsterdam-UMC/W_Measurements-CellProfiler)
 > (a BIAFLOWS workflow). It runs in [BIOMERO](https://github.com/NL-BioImaging/biomero), is described

@@ -5,7 +5,8 @@
 This repository was converted in place from a BIAFLOWS workflow (`descriptor.json` +
 `BiaflowsJob` wrapper) to a [bilayers](https://github.com/bilayer-containers/bilayers) container
 for BIOMERO, following the `create-biomero-container` procedure of
-[biomero-auto-container](https://github.com/NL-BioImaging/biomero-auto-container).
+[biomero-auto-container](https://github.com/NL-BioImaging/biomero-auto-container), with AI
+assistance (Claude Code).
 
 ### Tasks performed
 
